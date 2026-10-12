@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 AI 探索工作台</title>
+    <!-- 引入 Tailwind CSS 进行快速现代化的样式布局 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#0B0C10',
+                        cardDark: '#1F2833',
+                        accent: '#66FCF1',
+                        accentMuted: '#45A29E',
+                        textMain: '#C5C6C7'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0C10; /* 深色科技背景 */
+            color: #C5C6C7;
+        }
+
+        /* 隐藏滚动条但保留滚动 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0C10; }
+        ::-webkit-scrollbar-thumb { background: #1F2833; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #45A29E; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- 页面头部 -->
+    <header class="pt-16 pb-12 px-6 md:px-12 max-w-7xl mx-auto w-full text-center md:text-left">
+        <div class="inline-block mb-4 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium tracking-wide">
+            Portfolio Showcase
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+            我的 AI 探索工作台
+        </h1>
+        <p class="text-lg text-textMain max-w-2xl mx-auto md:mx-0">
+            欢迎来到我的数字花园。这里记录了我利用人工智能技术进行的一系列探索、实验与创意作品。
+        </p>
+    </header>
+
+    <!-- 主要作品展示区 -->
+    <main class="flex-1 px-6 md:px-12 pb-24 max-w-7xl mx-auto w-full">
+        <!-- 网格布局：手机端单列，平板双列，桌面三列 -->
+        <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- 卡片将通过 JavaScript 动态渲染到这里 -->
+        </div>
+    </main>
+
+    <!-- 数据与渲染逻辑 -->
+    <script>
+        /**
+         * 作品数据列表
+         * 【关于图片替换的说明】：
+         * 1. 在你的 GitHub 项目根目录下新建一个文件夹，命名为 `images`
+         * 2. 把你的图片（比如 project1.jpg）放进这个文件夹里
+         * 3. 把下面代码中的 `image` 属性值改为相对路径：'./images/project1.jpg'
+         */
+        const projects = [
+            {
+                title: "Midjourney 概念插画",
+                description: "通过精细的 Prompt 调优，使用 Midjourney V6 生成的赛博朋克风格城市概念图。",
+                // 替换示例: image: "./images/cyberpunk-city.jpg",
+                image: "https://placehold.co/800x500/1F2833/66FCF1?text=Concept+Art", 
+                tags: ["Midjourney", "AIGC", "Design"]
+            },
+            {
+                title: "本地大语言模型微调",
+                description: "在本地部署 Llama-3，并使用个人领域的特定数据进行了 LoRA 微调，实现了专属助手功能。",
+                // 替换示例: image: "./images/llm-tuning.png",
+                image: "https://placehold.co/800x500/1F2833/45A29E?text=LLM+Fine-tuning",
+                tags: ["Python", "LLM", "PyTorch"]
+            },
+            {
+                title: "AI 音乐生成实验",
+                description: "利用 Suno 结合个人创作的歌词，生成的不同曲风的音乐 Demo，探索 AI 在音频创作的潜力。",
+                // 替换示例: image: "./images/ai-music.webp",
+                image: "https://placehold.co/800x500/1F2833/C5C6C7?text=AI+Music",
+                tags: ["Suno", "Audio", "Prompting"]
+            },
+            {
+                title: "自动化工作流搭建",
+                description: "使用 Make.com 结合 OpenAI API，搭建了一个自动收集新闻并生成摘要推送到飞书的工作流。",
+                image: "https://placehold.co/800x500/1F2833/66FCF1?text=Automation",
+                tags: ["API", "OpenAI", "Workflow"]
+            },
+            {
+                title: "Stable Diffusion 建筑渲染",
+                description: "基于简单的线稿，利用 ControlNet 和 Stable Diffusion 快速渲染出逼真的建筑外立面效果图。",
+                image: "https://placehold.co/800x500/1F2833/45A29E?text=SD+Architecture",
+                tags: ["Stable Diffusion", "ControlNet"]
+            },
+            {
+                title: "智能贪吃蛇强化学习",
+                description: "一个简单的 Python 项目，展示了如何使用 DQN（深度Q网络）训练 AI 玩经典的贪吃蛇游戏。",
+                image: "https://placehold.co/800x500/1F2833/C5C6C7?text=Reinforcement+Learning",
+                tags: ["AI", "RL", "Game"]
+            }
+        ];
+
+        // 渲染卡片的函数
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            let htmlContent = '';
+
+            projects.forEach(project => {
+                // 生成标签的 HTML
+                const tagsHtml = project.tags.map(tag => 
+                    `<span class="px-2.5 py-1 bg-bgDark text-textMain text-xs font-medium rounded-md border border-gray-700/50">${tag}</span>`
+                ).join('');
+
+                // 构建单个卡片的 HTML 结构
+                // 包含悬浮效果：group-hover:scale-105 图片微放大, -translate-y-2 卡片上浮
+                htmlContent += `
+                    <article class="bg-cardDark rounded-2xl overflow-hidden border border-gray-800 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group flex flex-col cursor-pointer">
+                        <!-- 图片区域 (包裹在 overflow-hidden 中以实现图片放大不溢出) -->
+                        <div class="relative w-full h-48 sm:h-56 overflow-hidden bg-gray-900">
+                            <img 
+                                src="${project.image}" 
+                                alt="${project.title}" 
+                                class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                            >
+                            <!-- 悬浮时的遮罩层效果 -->
+                            <div class="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-colors duration-300"></div>
+                        </div>
+                        
+                        <!-- 文本内容区域 -->
+                        <div class="p-6 flex flex-col flex-1">
+                            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">
+                                ${project.title}
+                            </h3>
+                            <p class="text-sm text-textMain leading-relaxed mb-6 flex-1">
+                                ${project.description}
+                            </p>
+                            
+                            <!-- 底部标签区域 -->
+                            <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-gray-700/50">
+                                ${tagsHtml}
+                            </div>
+                        </div>
+                    </article>
+                `;
+            });
+
+            // 将生成的 HTML 注入到页面中
+            grid.innerHTML = htmlContent;
+        }
+
+        // 当页面内容加载完毕时执行渲染
+        document.addEventListener('DOMContentLoaded', renderGallery);
+    </script>
+</body>
+</html>
